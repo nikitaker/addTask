@@ -9,7 +9,6 @@ import { getCookie } from '../../utils/cookie';
 import { SESSION_COOKIE_NAME } from '../../utils/constants';
 import * as authActionCreator from '../../actionCreators/authActionCreator';
 import * as dashboardActionCreator from '../../actionCreators/dashboardActionCreator';
-import Canvas from './Canvas';
 import Button from "react-bootstrap/lib/Button";
 import ButtonToolbar from "react-bootstrap/lib/ButtonToolbar";
 
@@ -19,8 +18,10 @@ export class DashboardComponent extends Component {
     super(props);
     this.state = {
       X: null,
-      Y: null,
-      R: null
+      Y: undefined,
+      R: null,
+      width: 500,
+      height: 500
     };
 
     this.handleChangeX = this.handleChangeX.bind(this);
@@ -42,6 +43,220 @@ export class DashboardComponent extends Component {
     }
   }
 
+  drowCanvas(){
+    const that = this;
+    let width = this.state.width;
+    let height = this.state.height;
+    const canvas = this.refs.canvas;
+    const ctx = canvas.getContext("2d");
+
+            let oldPoints = [];
+            let oldPointEls = this.props.dashboard.data;
+            for (let i = 0; i < oldPointEls.length; i++) {
+                let x = oldPointEls[i+""]["x"];
+                let y = oldPointEls[i+""]["y"];
+                let hit = oldPointEls[i+""]["result"];
+                oldPoints.push({x, y, hit});
+            }
+
+    let scale = this.state.R;
+    let pointer = null;
+    let listener = () => {};
+    let mouseDownFlag = false;
+
+    canvas.addEventListener("click", onClick);
+    canvas.addEventListener("mousemove", onDrag);
+    canvas.addEventListener("mousedown", () => {mouseDownFlag = true});
+    canvas.addEventListener("mouseup", () => {mouseDownFlag = false});
+    canvas.addEventListener("mouseout", () => {mouseDownFlag = false});
+    ctx.mv = function(x, y) { this.moveTo(x*width, y*height); };
+    ctx.ln = function(x, y) { this.lineTo(x*width, y*height); };
+    ctx.txt = function(text, x, y) { this.fillText(text, x*width, y*height); };
+    rerender();
+
+    this.setListener = setListener;
+    this.setScale = setScale;
+    this.setX = setX;
+    this.setY = setY;
+
+    function onClick(event) {
+      if (!scale)
+        return listener(null, null);
+      let {layerX: elemX, layerY: elemY} = event;
+      let {scrollWidth: maxX, scrollHeight: maxY} = canvas;
+      let normalized = {x: elemX/maxX, y: elemY/maxY};
+      pointer = normalizedToGraphCoords(normalized);
+      rerender();
+      that.state.X = Math.round(pointer.x*1000)/1000;
+      that.state.Y = Math.round(pointer.y*1000)/1000;
+      that.submit();
+    }
+
+    function onDrag(event) {
+      if (!scale || !mouseDownFlag)
+        return;
+      let {layerX: elemX, layerY: elemY} = event;
+      let {scrollWidth: maxX, scrollHeight: maxY} = canvas;
+      let normalized = {x: elemX/maxX, y: elemY/maxY};
+      pointer = normalizedToGraphCoords(normalized);
+      rerender();
+    }
+
+
+    function normalizedToGraphCoords(point) {
+      return {x: scale*(point.x-.5)/.4, y: -scale*(point.y-.5)/.4}
+    }
+
+    function graphToNormalizedCoords(point) {
+      return {x: (point.x*0.4/scale+0.5), y: (-point.y*0.4/scale+0.5)}
+    }
+
+    function setX(x) {
+      if (!pointer)
+        pointer = {x: 0, y: 0};
+      if (x != null)
+        pointer.x = x;
+      else
+        pointer = null;
+      rerender();
+    }
+
+    function setY(y) {
+      if (!pointer)
+        pointer = {x: 0, y: 0};
+      if (y != null)
+        pointer.y = y;
+      else
+        pointer = null;
+      rerender();
+    }
+
+    function setScale(s) {
+      if (!s)
+        return;
+      scale = s;
+      rerender();
+    }
+
+    function setListener(l) {
+      listener = l;
+    }
+    canvas.onload = () => {rerender()}
+
+    function rerender(){
+      ctx.clearRect(0, 0, width, height);
+
+      ctx.fillStyle = "#349eeb";
+      ctx.fillRect(0.3*width, 0.1*height, 0.2*width, 0.4*height);
+      ctx.beginPath();
+      ctx.mv(.3, .5);
+      ctx.ln(.5, .9);
+      ctx.ln(.5, .5);
+      ctx.arc(0.5*width, 0.5*height, .2*(width+height)/2, -0.5*Math.PI, 0);
+      ctx.fill();
+
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = "black";
+      ctx.fillStyle = "black";
+
+      ctx.beginPath();
+      ctx.mv(0, .5);
+      ctx.ln(1, .5);
+      ctx.ln(.97, .48);
+      ctx.mv(1, .5);
+      ctx.ln(.97, .52);
+
+      ctx.mv(.1, .49);
+      ctx.ln(.1, .51);
+      ctx.mv(.3, .49);
+      ctx.ln(.3, .51);
+      ctx.mv(.7, .49);
+      ctx.ln(.7, .51);
+      ctx.mv(.9, .49);
+      ctx.ln(.9, .51);
+
+      ctx.mv(.5, 1);
+      ctx.ln(.5, 0);
+      ctx.ln(.48, .03);
+      ctx.mv(.5, 0);
+      ctx.ln(.52, .03);
+
+      ctx.mv(.49, .9);
+      ctx.ln(.51, .9);
+      ctx.mv(.49, .7);
+      ctx.ln(.51, .7);
+      ctx.mv(.49, .3);
+      ctx.ln(.51, .3);
+      ctx.mv(.49, .1);
+      ctx.ln(.51, .1);
+
+
+      ctx.font = "30px Arial";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "top";
+      ctx.txt(scale ? -scale : "-R", .1, .52);
+      ctx.txt(scale ? -scale/2 : "-R/2", .3, .52);
+      ctx.txt(scale ? scale/2 : "R/2", .7, .52);
+      ctx.txt(scale ? scale : "R", .9, .52);
+      ctx.txt("x", .97, .52);
+
+      ctx.textAlign = "left";
+      ctx.textBaseline = "middle";
+      ctx.txt(scale ? -scale : "-R", .52, .9);
+      ctx.txt(scale ? -scale/2 : "-R/2", .52, .7);
+      ctx.txt(scale ? scale/2 : "R/2", .52, .3);
+      ctx.txt(scale ? scale : "R", .52, .1);
+      ctx.txt("y", .52, .03);
+      ctx.stroke();
+
+       if (scale) {
+           for (let i = 0; i < oldPoints.length; i++) {
+               let current = oldPoints[i];
+               ctx.fillStyle = current.hit ? "green" : "red";
+               let {x, y} = graphToNormalizedCoords(current);
+               ctx.beginPath();
+               ctx.arc(x*width, y*height, .005*(width+height)/2, 0, 2*Math.PI);
+               ctx.fill();
+           }
+       }
+
+      if (pointer) {
+        ctx.fillStyle = "#aa0000";
+        ctx.strokeStyle = "#aa0000";
+
+        let {x, y} = graphToNormalizedCoords(pointer);
+
+        ctx.beginPath();
+        ctx.arc(x*width, y*height, .005*(width+height)/2, 0, 2*Math.PI);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.mv(x, y + .01);
+        ctx.ln(x, y + .02);
+        ctx.mv(x, y - .01);
+        ctx.ln(x, y - .02);
+        ctx.mv(x + .01, y);
+        ctx.ln(x + .02, y);
+        ctx.mv(x - .01, y);
+        ctx.ln(x - .02, y);
+        ctx.stroke();
+
+        if (mouseDownFlag) {
+          ctx.fillStyle = "rgba(0, 0, 0, .75)";
+          ctx.font = "24px Arial";
+          ctx.textAlign = "left";
+          ctx.textBaseline = "bottom";
+
+          let text = `x: ${pointer.x.toFixed(2)} y: ${pointer.y.toFixed(2)}`;
+          ctx.fillRect(x*width + 10, y*height - 10, 35 + 9*text.length, -50);
+          ctx.fillStyle = "white";
+          ctx.fillText(text, x*width + 20, y*height - 20)
+        }
+      }
+    }
+  }
+
+
   handleChangeX(event) {
     this.setState({X: event.target.value});
   }
@@ -54,16 +269,18 @@ export class DashboardComponent extends Component {
   }
   handleChangeR(event) {
     this.setState({R: event.target.value});
+    this.drowCanvas();
   }
 
   checkKey(keyOuter,keyInner){
     if(keyInner === 'updatedAt'){return null;}
-    else {return this.props.dashboard.data[keyOuter][keyInner]}
+    else {return ""+this.props.dashboard.data[keyOuter][keyInner]}
   }
 
   submit() {
-    if(this.state.X != null && this.state.Y != null && this.state.R != null)
-    {this.props.submit(this.state.X, this.state.Y, this.state.R);}
+    if(this.state.X != null && this.state.Y !== undefined && this.state.R != null)
+    { this.props.submit(this.state.X, this.state.Y, this.state.R);
+      window.location.reload();}
     else{alert("Данные не верны.")}
   }
 
@@ -78,35 +295,31 @@ export class DashboardComponent extends Component {
           </Row>
           <Row>
             <Col>
-              <Canvas > </Canvas>
+              <canvas ref="canvas" onLoad={this.props.dashboard && this.drowCanvas()} width={this.state.width} height={this.state.height} onClick={this.handleCanvas}> </canvas>
             </Col>
           </Row>
-
-          <Table striped bordered hover border="5" bordercolor="white" >
+          <Table striped bordered hover>
             <thead>
             <tr>
               <th>Time stamp</th>
-              <th></th>
+              <th> </th>
               <th>Username</th>
-              <th></th>
+              <th>Result</th>
+              <th>R</th>
               <th>X</th>
               <th>Y</th>
-              <th>Z</th>
             </tr>
             </thead>
             <tbody>
             {this.props.dashboard && Object.keys(this.props.dashboard.data).map(keyOuter => {
-              return <tr>{Object.keys(this.props.dashboard.data[keyOuter]).map(keyInner => {
+              return <tr key={keyOuter}>{Object.keys(this.props.dashboard.data[keyOuter]).map(keyInner => {
                 return (        
-                    <td>{this.checkKey(keyOuter,keyInner)}</td>
+                    <td key={keyInner+keyOuter}>{this.checkKey(keyOuter,keyInner)}</td>
                   );
               })}</tr>
             })}
             </tbody>
           </Table>
-
-
-
           <form method="post" onSubmit={this.handleSubmit}>
             <label>
               <Row>
@@ -160,7 +373,7 @@ DashboardComponent.propTypes = {
   loadDashboard: PropTypes.func,
   history: PropTypes.object,
   dashboard: PropTypes.shape({
-    data: PropTypes.string
+    data: PropTypes.array
   })
 };
 
@@ -180,7 +393,6 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({
-    onClick: Canvas.onClick,
     submit: authActionCreator.submit,
     getUser: authActionCreator.getUser,
     loadDashboard: dashboardActionCreator.loadDashboard
