@@ -18,6 +18,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+import com.example.spring.server.controller.SheetTest;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -47,6 +48,7 @@ public class DashboardController {
     @PostMapping("/submit")
     public Map<String, Object> loadDashboard(@Valid @RequestBody MultiValueMap paramMap, HttpServletRequest request, HttpServletResponse resp) {
         HashMap<String, Object> response = new HashMap<>();
+        SheetTest sheetTest = new SheetTest();
         float X = Float.parseFloat((String) paramMap.getFirst("X"));
         float Y = Float.parseFloat((String) paramMap.getFirst("Y"));
         float R = Float.parseFloat((String) paramMap.getFirst("R"));
@@ -57,6 +59,7 @@ public class DashboardController {
         System.out.println(R);
         System.out.println(applicationUser.getUsername());
         System.out.println(result);
+        System.out.println(sheetTest.getResult());
 
         ApplicationPoint applicationPoint = new ApplicationPoint();
         applicationPoint.setX(X);

@@ -281,7 +281,7 @@ export class DashboardComponent extends Component {
     if(this.state.X != null && this.state.Y !== undefined && this.state.R != null)
     { this.props.submit(this.state.X, this.state.Y, this.state.R);
       window.location.reload();}
-    else{alert("Данные не верны.")}
+    else{alert("Wrong data")}
   }
 
   render() {
@@ -294,8 +294,57 @@ export class DashboardComponent extends Component {
             </Col>
           </Row>
           <Row>
+            <Col sm={7}>
+              <canvas ref="canvas" onLoad={this.refs.canvas && this.props.dashboard && this.drowCanvas()} width={this.state.width} height={this.state.height} onClick={this.handleCanvas}> </canvas>
+            </Col>
             <Col>
-              <canvas ref="canvas" onLoad={this.props.dashboard && this.drowCanvas()} width={this.state.width} height={this.state.height} onClick={this.handleCanvas}> </canvas>
+              <Grid>
+              <form method="post" onSubmit={() => this.submit()}>
+                <label>
+                  <Row>
+                    <Col>X</Col>
+                    <ButtonToolbar>
+                      <Button value="-2" onClick={this.handleChangeX} >-2</Button>
+                      <Button value="-1.5" onClick={this.handleChangeX}>-1.5</Button>
+                      <Button value="-1" onClick={this.handleChangeX}>-1</Button>
+                      <Button value="-0.5" onClick={this.handleChangeX}>-0.5</Button>
+                      <Button value="0" onClick={this.handleChangeX}>0</Button>
+                      <Button value="0.5" onClick={this.handleChangeX}>0.5</Button>
+                      <Button value="1" onClick={this.handleChangeX}>1</Button>
+                      <Button value="1.5" onClick={this.handleChangeX}>1.5</Button>
+                      <Button value="2" onClick={this.handleChangeX}>2</Button>
+                    </ButtonToolbar>
+                  </Row>
+                  <Row><Col>Y</Col>
+                    <Col>
+                      <input type="text" ref="Y" name="Y" placeholder="Y" size={43} maxLength={7} value={this.state.Y} onChange={this.handleChangeY} />
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col>R</Col>
+                    <Col>
+                      <ButtonToolbar>
+                        <Button value="-2" onClick={this.handleChangeR} >-2</Button>
+                        <Button value="-1.5" onClick={this.handleChangeR}>-1.5</Button>
+                        <Button value="-1" onClick={this.handleChangeR}>-1</Button>
+                        <Button value="-0.5" onClick={this.handleChangeR}>-0.5</Button>
+                        <Button bsStyle="info" value="0" onClick={this.handleChangeR}>0</Button>
+                        <Button value="0.5" onClick={this.handleChangeR}>0.5</Button>
+                        <Button value="1" onClick={this.handleChangeR}>1</Button>
+                        <Button value="1.5" onClick={this.handleChangeR}>1.5</Button>
+                        <Button value="2" onClick={this.handleChangeR}>2</Button>
+                      </ButtonToolbar>
+                    </Col>
+                  </Row>
+                  <Row><Col>Send</Col></Row>
+                <Row>
+                  <Col>
+                    <Button  bsStyle="success" onClick={() => this.submit()} block>Send</Button>
+                  </Col>
+                </Row>
+              </label>
+              </form>
+              </Grid>
             </Col>
           </Row>
           <Table striped bordered hover>
@@ -320,48 +369,7 @@ export class DashboardComponent extends Component {
             })}
             </tbody>
           </Table>
-          <form method="post" onSubmit={this.handleSubmit}>
-            <label>
-              <Row>
-                <Col>X</Col>
-                <ButtonToolbar>
-                    <Button variant="secondary" value="-2" onClick={this.handleChangeX} >-2</Button>
-                    <Button variant="success" value="-1.5" onClick={this.handleChangeX}>-1.5</Button>
-                    <Button variant="warning" value="-1" onClick={this.handleChangeX}>-1</Button>
-                    <Button variant="danger" value="-0.5" onClick={this.handleChangeX}>-0.5</Button>
-                    <Button variant="info" value="0" onClick={this.handleChangeX}>0</Button>
-                    <Button variant="dark" value="0.5" onClick={this.handleChangeX}>0.5</Button>
-                    <Button variant="secondary" value="1" onClick={this.handleChangeX}>1</Button>
-                    <Button variant="success" value="1.5" onClick={this.handleChangeX}>1.5</Button>
-                    <Button variant="warning" value="2" onClick={this.handleChangeX}>2</Button>
-                </ButtonToolbar>
-              </Row>
-              <Row><Col>Y</Col>
-                <Col>
-              <input type="text" ref="Y" name="Y" placeholder="Y" value={this.state.Y} onChange={this.handleChangeY} />
-              </Col>
-              </Row>
-              <Row>
-                <Col>R</Col>
-                <Col>
-                  <ButtonToolbar>
-                    <Button variant="secondary" value="-2" onClick={this.handleChangeR} >-2</Button>
-                    <Button variant="success" value="-1.5" onClick={this.handleChangeR}>-1.5</Button>
-                    <Button variant="warning" value="-1" onClick={this.handleChangeR}>-1</Button>
-                    <Button variant="danger" value="-0.5" onClick={this.handleChangeR}>-0.5</Button>
-                    <Button variant="info" value="0" onClick={this.handleChangeR}>0</Button>
-                    <Button variant="dark" value="0.5" onClick={this.handleChangeR}>0.5</Button>
-                    <Button variant="secondary" value="1" onClick={this.handleChangeR}>1</Button>
-                    <Button variant="success" value="1.5" onClick={this.handleChangeR}>1.5</Button>
-                    <Button variant="warning" value="2" onClick={this.handleChangeR}>2</Button>
-                </ButtonToolbar>
-                </Col>
-              </Row>
-        </label>
-            <Row>
-              <Button bsStyle="primary" onClick={() => this.submit()}>Send</Button>
-            </Row>
-        </form>
+
         </Grid>
     );
   }

@@ -40,7 +40,10 @@ export class RegisterComponent extends Component {
   }
 
   register() {
-    this.props.register(this.state.username, this.state.email, this.state.password);
+    if(this.state.username && this.state.email && this.state.password){
+    this.props.register(this.state.username, this.state.email, this.state.password)}
+    else
+    {alert("Wrong data")}
   }
 
   render() {
