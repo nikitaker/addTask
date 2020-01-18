@@ -11,6 +11,8 @@ import * as authActionCreator from '../../actionCreators/authActionCreator';
 import * as dashboardActionCreator from '../../actionCreators/dashboardActionCreator';
 import Button from "react-bootstrap/lib/Button";
 import ButtonToolbar from "react-bootstrap/lib/ButtonToolbar";
+import Iframe from 'react-iframe';
+import VK, { Poll, Post } from "react-vk";
 
 export class DashboardComponent extends Component {
 
@@ -28,6 +30,7 @@ export class DashboardComponent extends Component {
     this.handleChangeY = this.handleChangeY.bind(this);
     this.handleChangeR = this.handleChangeR.bind(this);
     this.submit = this.submit.bind(this);
+    this.canvasYoutubeChanger = this.canvasYoutubeChanger.bind(this);
   }
 
   componentWillMount() {
@@ -43,7 +46,7 @@ export class DashboardComponent extends Component {
     }
   }
 
-  drowCanvas(){
+  drawCanvas(){
     const that = this;
     let width = this.state.width;
     let height = this.state.height;
@@ -141,7 +144,7 @@ export class DashboardComponent extends Component {
     function setListener(l) {
       listener = l;
     }
-    canvas.onload = () => {rerender()}
+    canvas.onload = () => {rerender()};
 
     function rerender(){
       ctx.clearRect(0, 0, width, height);
@@ -269,7 +272,6 @@ export class DashboardComponent extends Component {
   }
   handleChangeR(event) {
     this.setState({R: event.target.value});
-    this.drowCanvas();
   }
 
   checkKey(keyOuter,keyInner){
@@ -284,6 +286,27 @@ export class DashboardComponent extends Component {
     else{alert("Wrong data")}
   }
 
+  rickroll(){if(this.props.dashboard){
+    if(this.props.dashboard.lk){return <a href="https://bit.ly/IqT6zt" style={{fontSize: 40}} >Press me</a> }}
+  }
+
+  canvasYoutubeChanger(){
+    if (this.state.R === "-2"){ return <Iframe id="ytplayer" type="text/html" width="600" height="337"
+              src="https://www.youtube.com/embed/UMRNfWSwmPo?autoplay=1&iv_load_policy=3"
+              frameBorder="0" allowFullScreen> </Iframe>;
+    }
+    else{ if(this.state.R === "-1"){ return  <VK apiId={7280144}><Poll pollId='359747137_ab512ee8df939abeb2' /></VK>}
+
+    else { if(this.state.R === "-1.5"){ return <VK>
+      <Post ownerId={150946486}
+            postId={1473}
+            hash='m45L8cnzpB2HXxuXu4ThA_EqV_U' />
+    </VK>}
+    else{
+      return <canvas ref="canvas" onLoad={this.refs.canvas && this.props.dashboard && this.drawCanvas()} width={this.state.width} height={this.state.height} onClick={this.handleCanvas}> </canvas>
+    }
+  }}}
+
   render() {
 
     return (
@@ -295,7 +318,7 @@ export class DashboardComponent extends Component {
           </Row>
           <Row>
             <Col sm={7}>
-              <canvas ref="canvas" onLoad={this.refs.canvas && this.props.dashboard && this.drowCanvas()} width={this.state.width} height={this.state.height} onClick={this.handleCanvas}> </canvas>
+              {this.canvasYoutubeChanger()}
             </Col>
             <Col>
               <Grid>
@@ -340,6 +363,7 @@ export class DashboardComponent extends Component {
                 <Row>
                   <Col>
                     <Button  bsStyle="success" onClick={() => this.submit()} block>Send</Button>
+                    {this.rickroll()}
                   </Col>
                 </Row>
               </label>
@@ -381,7 +405,8 @@ DashboardComponent.propTypes = {
   loadDashboard: PropTypes.func,
   history: PropTypes.object,
   dashboard: PropTypes.shape({
-    data: PropTypes.array
+    data: PropTypes.array,
+    lk: PropTypes.bool
   })
 };
 

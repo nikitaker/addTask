@@ -51,7 +51,7 @@ public class SheetTest {
         try {
             final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
             final String spreadsheetId = "1hGx52Q6omjFo7D_0L_FXXhb5FyVR2I6m2bmbOKYdEVA";
-            final String range = "P3201!R4";
+            final String range = "P3201!Z13";
             Sheets service = new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                     .setApplicationName(APPLICATION_NAME)
                     .build();
@@ -75,9 +75,6 @@ public class SheetTest {
 
     }
 
-    public static void main(String[] args) {
-        System.out.println(getResult());
-    }
 
     public static Boolean getResult(){
         SheetTest sheetTest = new SheetTest();
