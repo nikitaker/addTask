@@ -1,5 +1,6 @@
-# Lab4
+# client
 npm install
-npm run start
 
+npm run start
+# server
 mvn spring-boot:run
