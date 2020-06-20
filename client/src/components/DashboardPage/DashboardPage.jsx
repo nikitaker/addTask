@@ -1,20 +1,16 @@
-import React, { Component } from 'react';
-import { bindActionCreators } from 'redux';
-import { withRouter } from 'react-router-dom';
+import React, {Component} from 'react';
+import {bindActionCreators} from 'redux';
+import {withRouter} from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import {Grid, Col, Row, Table} from 'react-bootstrap';
+import {connect} from 'react-redux';
+import {Col, Grid, Row} from 'react-bootstrap';
 import NavigationBar from '../NavigationBar/NavigationBar';
-import { getCookie } from '../../utils/cookie';
-import { SESSION_COOKIE_NAME } from '../../utils/constants';
+import {getCookie} from '../../utils/cookie';
+import {SESSION_COOKIE_NAME} from '../../utils/constants';
 import * as authActionCreator from '../../actionCreators/authActionCreator';
 import * as dashboardActionCreator from '../../actionCreators/dashboardActionCreator';
 
 export class DashboardComponent extends Component {
-
-  constructor(props){
-    super(props);
-  }
 
   componentWillMount() {
     const sid = getCookie(SESSION_COOKIE_NAME);
