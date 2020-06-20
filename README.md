@@ -1,2 +1,5 @@
 # Lab4
-n
+npm install
+npm run start
+
+mvn spring-boot:run
