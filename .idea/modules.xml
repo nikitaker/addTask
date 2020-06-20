@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Lab4.iml" filepath="$PROJECT_DIR$/Lab4.iml" />
+      <module fileurl="file://$PROJECT_DIR$/addTask.iml" filepath="$PROJECT_DIR$/addTask.iml" />
+      <module fileurl="file://$PROJECT_DIR$/server/server.iml" filepath="$PROJECT_DIR$/server/server.iml" />
     </modules>
   </component>
 </project>
