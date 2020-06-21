@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @MappedSuperclass
-@EntityListeners(AuditingEntityListener.class) // Automatically updates the two field values
+@EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties(
         value = {"createdAt", "updatedAt"},
         allowGetters = true

@@ -3,7 +3,6 @@ package com.example.spring.server.utils;
 public final class Constants {
 
     private Constants() {
-        // restrict instantiation
     }
 
     public static final String SESSION_COOKIE_NAME = "_sid";

@@ -11,7 +11,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +24,6 @@ import java.util.Map;
 
 import static com.example.spring.server.utils.Constants.COOKIE_EXPIRATION_TIME;
 import static com.example.spring.server.utils.Constants.SESSION_COOKIE_NAME;
-import static java.util.Collections.emptyList;
 
 @RestController
 @RequestMapping("/auth")
